@@ -28,6 +28,7 @@ const TodoApp = function () {
   return (<div className="bg-cover bg-center bg-no-repeat h-52 px-6 pt-28 "
                style={{ backgroundImage: `url(${headerImg})` }}>
     <TaskInput onAddTask={taskAddHandler}/>
+    <div className="h-52 bg-amber-100"></div>
   </div>)
 }
 
