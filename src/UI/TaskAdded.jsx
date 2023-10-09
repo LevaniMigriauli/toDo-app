@@ -2,13 +2,13 @@ import Icon from '../common/SimpleComponents/Icon.jsx'
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const TaskAdded = function ({ key, task }) {
+const TaskAdded = function ({ task }) {
   const [iconCompletedIsClicked, setIconCompletedIsClicked] = useState(false)
   // console.log([...Object.values(tasks)].flat())
   // const allTasks = [...Object.values(tasks)].flat()
   return (
-    <div key={key}
-         className="flex items-center bg-white border-b-1 border-lightestGrey pt-4 pb-4 pl-5 pr-5">
+    <div
+      className="flex items-center bg-white border-b-1 border-lightestGrey pt-4 pb-4 pl-5 pr-5">
       <i
         className="icn h-5"
         onClick={() => setIconCompletedIsClicked(!iconCompletedIsClicked)}
