@@ -1,43 +1,57 @@
 import TaskInput from '../UI/TaskInput.jsx'
-import { useReducer, useState } from 'react'
+import { useReducer } from 'react'
 import headerImg from '../assets/images/bitmap.png'
 import TaskAdded from '../UI/TaskAdded.jsx'
 
+const initialState = {
+  active: [],
+  completed: [],
+  filteredTasks: [],
+  filter: 'ALL'  // Possible values: 'ALL', 'ACTIVE', 'COMPLETED'
+}
+
 const taskReducer = function (state, action) {
+  let filteredTasks
   console.log(state, action)
-  if (action.type === 'Active') {
-    return [...action.tasks.active]
-  }
-  if (action.type === 'Completed') {
-    return [...action.tasks.completed]
-  }
-  if (action.type === 'All') {
-    return [...Object.values(action.tasks)].flat()
+  switch (action.type) {
+    case 'ADD_TASK':
+      return { ...state, active: [...state.active, action.task] }
+    case 'ADD_TASK_COMPLETED':
+      return { ...state, completed: [...state.completed, action.task] }
+    case 'SET_FILTER':
+      switch (action.filter) {
+        case 'ALL':
+          console.log(state)
+          filteredTasks = [...state.active, ...state.completed]
+          break
+        case 'ACTIVE':
+          filteredTasks = [...state.active]
+          break
+        case 'COMPLETED':
+          filteredTasks = [...state.completed]
+          break
+        default:
+          filteredTasks = []
+      }
+      return { ...state, filter: action.filter, filteredTasks: filteredTasks }
+    case 'CLEAR_COMPLETED':
+      console.log({ ...state })
+      return { ...state, completed: [] }
+    default:
+      throw new Error(`Unhandled action type: ${action.type}`)
   }
 }
 const TodoApp = function () {
-  const [tasks, setTasks] = useState({
-    active: [],
-    completed: []
-  })
+  const [tasksState, dispatchTasks] = useReducer(taskReducer, initialState)
 
-  const [tasksState, dispatchTasks] = useReducer(taskReducer, {
-    type: '',
-    tasks: []
-  })
-
-  const taskAddHandler = function (newTask, newTaskDone) {
-    // console.log(newTask, newTaskDone)
-    setTasks((prevState) => {
-        return newTask && {
-          ...prevState,
-          active: [...prevState.active, newTask]
-        } || {
-          ...prevState,
-          completed: [...prevState.completed, newTaskDone]
-        }
-      }
-    )
+  console.log(tasksState)
+  const taskAddHandler = function (newTask, newTaskCompleted) {
+    if (newTask) {
+      dispatchTasks({ type: 'ADD_TASK', task: newTask })
+    } else {
+      dispatchTasks({ type: 'ADD_TASK_COMPLETED', task: newTaskCompleted })
+    }
+    dispatchTasks({ type: 'SET_FILTER', filter: tasksState.filter })
   }
 
   return (
@@ -47,7 +61,7 @@ const TodoApp = function () {
         <TaskInput onAddTask={taskAddHandler}/>
         <div
           className="h-368 bg-lightestGrey rounded-5 overflow-hidden mb-4 relative">
-          {tasksState && tasksState.map(
+          {tasksState && tasksState.filteredTasks.map(
             (task) => {
               return <TaskAdded key={task.id} task={task.task}/>
             })}
@@ -56,20 +70,22 @@ const TodoApp = function () {
             style={{ paddingBottom: '22px' }}>
             {/*<p>{tasks.active.length} items*/}
             {/*  left</p>*/}
-            <button type="button">Clear Completed</button>
+            <button type="button" onClick={() => dispatchTasks(
+              { type: 'CLEAR_COMPLETED' })}>Clear Completed
+            </button>
           </div>
         </div>
 
         <div className="h-12 bg-white flex justify-between text-14 items-start"
              style={{ padding: '15px 80px' }}>
           <button type={'button'} onClick={() => dispatchTasks(
-            { type: 'All', tasks: tasks })}>ALL
+            { type: 'SET_FILTER', filter: 'ALL' })}>ALL
           </button>
           <button type={'button'} onClick={() => dispatchTasks(
-            { type: 'Active', tasks: tasks })}>Active
+            { type: 'SET_FILTER', filter: 'ACTIVE' })}>Active
           </button>
           <button type={'button'} onClick={() => dispatchTasks(
-            { type: 'Completed', tasks: tasks })}>Completed
+            { type: 'SET_FILTER', filter: 'COMPLETED' })}>Completed
           </button>
         </div>
       </div>
