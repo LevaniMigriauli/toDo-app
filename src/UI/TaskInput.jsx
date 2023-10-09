@@ -23,8 +23,8 @@ const TaskInput = function ({ onAddTask }) {
   }
 
   return (
-    <div className="flex items-center gap-3 w-full h-12 bg-white rounded-md mb-4">
-
+    <div
+      className="flex items-center gap-3 w-full h-12 bg-white rounded-md mb-4">
       <i
         className="icn ml-5"
         onClick={() => setIconCompletedIsClicked(!iconCompletedIsClicked)}
@@ -43,9 +43,8 @@ const TaskInput = function ({ onAddTask }) {
     </div>)
 }
 
-
 TaskInput.propTypes = {
   onAddTask: PropTypes.func
-};
+}
 
 export default TaskInput
